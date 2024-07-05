@@ -6,29 +6,50 @@
     <title>Todo List</title>
 </head>
 <body>
-    <h1>Welcome, User</h1>
+    {{ if .LoggedIn }}
+        <h1>Welcome, {{ .Username }}</h1>
+    {{ else }}
+        <h1>Welcome, User</h1>
+    {{ end }}
 
-    <!-- form for adding new todo item -->
+    <!-- Form for adding a new todo item -->
+    <!-- This form posts to the "/add" route when submitted -->
+    <!-- It includes a text input field for the todo item text and a submit button -->
+    <!-- The text input field is named "todo" and is required -->
+    <!-- The form action is set to "/add" -->
+    <!-- The form method is set to "post" -->
     <form action="/add" method="post">
+        <!-- Text input field for the todo item text -->
         <input type="text" name="todo" required>
+        <!-- Submit button for the form -->
         <button type="submit">Add to ToDo</button>
     </form>
 
     <!-- todo list -->
     <ul>
+        <!-- Range over the Todos variable passed in as data -->
         {{range $index, $todo := .Todos}}
             <li>
+                <!-- Form for toggling the "done" status of a todo item -->
                 <form action="/toggle" method="post" style="display: inline;">
+                    <!-- Hidden input field with the index of the todo item -->
                     <input type="hidden" name="index" value="{{$index}}">
-                    <input type="checkbox" {{ if $todo.Done }} checked {{ end }} onchange="this.form.submit()">
+                    <!-- Checkbox that triggers the form submission when clicked -->
+                    <!-- Check the checkbox if the todo item is done -->
+                    <input type="checkbox" 
+                           {{ if $todo.Done }} checked {{ end }} 
+                           onchange="this.form.submit()">
                 </form>
 
+                {{/* Display the todo item text */}}
                 {{ if $todo.Done }}
+                    <!-- If the todo item is done, display it as a deleted text -->
                     <del>{{ $todo.Text }}</del>
                 {{ else }}
                     {{ $todo.Text }}
                 {{ end }}
             </li>
+        <!-- End of range loop over the todos -->
         {{end}}
     </ul>
     
