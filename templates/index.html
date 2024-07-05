@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<body>
+    <h1>Welcome, User</h1>
+
+    <!-- form for adding new todo item -->
+    <form action="/add" method="post">
+        <input type="text" name="todo" required>
+        <button type="submit">Add to ToDo</button>
+    </form>
+
+    <!-- todo list -->
+    <ul>
+        {{range $index, $todo := .Todos}}
+            <li>
+                <form action="/toggle" method="post" style="display: inline;">
+                    <input type="hidden" name="index" value="{{$index}}">
+                    <input type="checkbox" {{ if $todo.Done }} checked {{ end }} onchange="this.form.submit()">
+                </form>
+
+                {{ if $todo.Done }}
+                    <del>{{ $todo.Text }}</del>
+                {{ else }}
+                    {{ $todo.Text }}
+                {{ end }}
+            </li>
+        {{end}}
+    </ul>
+    
+</body>
+</html>
