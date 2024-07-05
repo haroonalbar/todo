@@ -67,6 +67,13 @@ func main() {
 		// Redirect the user to the home page
 		ctx.Redirect(http.StatusSeeOther, "/")
 	})
+
+	// Start the Gin router on port 8080
+	// This blocks until the server is shutdown, so it should be the last line of the main function
+	//
+	// Parameters:
+	// - ":8080": the port to listen on
+	router.Run(":8080")
 }
 
 // toggleIndex toggles the "Done" status of a todo item in the "todos" list
