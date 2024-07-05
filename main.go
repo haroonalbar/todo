@@ -1,10 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 )
 
 type Todo struct {
@@ -17,7 +23,17 @@ var (
 	loggedInUser string
 )
 
+// key used for signing and verifying JWT tokens
+var secretKey = []byte("")
+
 func main() {
+	// Load environment variables from .env file if it exists
+	// This is helpful for avoiding hardcoding sensitive information like API keys
+	godotenv.Load()
+	secretKeyEnv := os.Getenv("SECRET_KEY")
+
+	// Add the secret key to the global secretKey variable
+	secretKey = []byte(secretKeyEnv)
 
 	// Create a new router with default middleware
 	router := gin.Default()
@@ -90,4 +106,25 @@ func toggleIndex(s string) {
 	if i >= 0 && i < len(todos) {
 		todos[i].Done = !todos[i].Done
 	}
+}
+
+func createToken(usename string) (string, error) {
+	// Create a new JWT token with the specified claims
+	claims := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+		"sub": usename,                              // subject (user identifier)
+		"iss": "todo-app",                           // issuer
+		"aud": getRole(usename),                     // audience (user role)
+		"exp": time.Now().Add(2 * time.Hour).Unix(), // expiration time
+		"iat": time.Now().Unix(),                    // issued at
+	})
+
+	// Print information about the created token
+	fmt.Printf("Token claims added: %+v\n", claims)
+
+	// return tokenString,nil
+	panic("not used")
+}
+
+func getRole(usename string) string {
+	return ""
 }
